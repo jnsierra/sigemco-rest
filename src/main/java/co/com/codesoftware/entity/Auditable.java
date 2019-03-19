@@ -22,11 +22,11 @@ import lombok.Setter;
 public abstract class Auditable<U> {
 	
 	@CreatedBy
-    @Column(name = "created_by")
+    @Column(name = "created_by", updatable = false)
     private U createdBy;
 
     @CreatedDate
-    @Column(name = "created_date")
+    @Column(name = "created_date", updatable = false)
     private Date createdDate;
 
     @LastModifiedBy
