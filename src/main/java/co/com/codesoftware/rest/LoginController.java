@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import co.com.codesoftware.dto.LoginDto;
+import co.com.codesoftware.dto.error.ResponseRestService;
 import co.com.codesoftware.entity.RoleRestEntity;
 import co.com.codesoftware.service.IRoleRestService;
 import co.com.codesoftware.service.ITokenService;
@@ -21,33 +22,32 @@ import co.com.codesoftware.service.IUsuarioService;
 
 @RestController
 public class LoginController {
-	
+
 	@Autowired
 	ITokenService tokenService;
-	
+
 	@Autowired
 	IUsuarioService usuarioService;
-	
+
 	@Autowired
 	IRoleRestService roleRestService;
-	
+
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
-	public ResponseEntity<String> login(@RequestBody LoginDto loginDto){
-		if(!usuarioService.validateAuth(loginDto.getUsuario(), loginDto.getContrasena())) {
-			return new ResponseEntity<>("Credenciales Invalidas",HttpStatus.UNAUTHORIZED);
+	public ResponseEntity<ResponseRestService<String>> login(@RequestBody LoginDto loginDto) {
+		if (!usuarioService.validateAuth(loginDto.getUsuario(), loginDto.getContrasena())) {
+			return new ResponseEntity<>(new ResponseRestService<>("Credenciales Invalidas"), HttpStatus.UNAUTHORIZED);
 		}
 		Optional<List<RoleRestEntity>> roles = roleRestService.findRolesByUser(loginDto.getUsuario());
-		if(!roles.isPresent()) {
+		if (!roles.isPresent()) {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
-		String rolesStr = roles.get().stream()
-				.parallel()
-				.map(item -> item.getNombre())
-				.reduce((x,y) ->  x + "," + y )
+		String rolesStr = roles.get().stream().parallel().map(item -> item.getNombre()).reduce((x, y) -> x + "," + y)
 				.orElse("");
-		List<GrantedAuthority> grantedAuthorities = AuthorityUtils
-				.commaSeparatedStringToAuthorityList(rolesStr);
-		return new ResponseEntity<>(tokenService.generateToken(loginDto.getUsuario(), grantedAuthorities), HttpStatus.OK);
+		List<GrantedAuthority> grantedAuthorities = AuthorityUtils.commaSeparatedStringToAuthorityList(rolesStr);
+
+		return new ResponseEntity<>(
+				new ResponseRestService<>(tokenService.generateToken(loginDto.getUsuario(), grantedAuthorities)),
+				HttpStatus.OK);
 	}
 
 }

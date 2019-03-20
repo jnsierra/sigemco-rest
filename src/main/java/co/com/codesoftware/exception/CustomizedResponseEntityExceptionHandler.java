@@ -13,32 +13,30 @@ import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import co.com.codesoftware.dto.error.ErrorDetails;
+import co.com.codesoftware.dto.error.ResponseRestService;
 
 @ControllerAdvice
 @RestController
 public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
 	@ExceptionHandler(Exception.class)
-	public final ResponseEntity<ErrorDetails> handleAllExceptions(Exception ex, WebRequest request) {
-		System.out.println("*********************************************************************");
+	public final ResponseEntity<ResponseRestService> handleAllExceptions(Exception ex, WebRequest request) {
+		System.out.println(
+				"**************************Mensaje Controlado por aspecto (ExceptionHandler)*******************************************");
 		ex.printStackTrace();
 		System.out.println("*********************************************************************");
-		ErrorDetails errorDetails = new ErrorDetails();
-		errorDetails.setUri(((ServletWebRequest)request).getRequest().getRequestURL().toString());
-		errorDetails.setMethod(((ServletWebRequest)request).getRequest().getMethod());
-		errorDetails.setMessage(ex.getMessage());
-		errorDetails.setUser(SecurityContextHolder.getContext().getAuthentication().getName());
-		if(ex instanceof JpaSystemException ) {
-			errorDetails.setHttpStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-			errorDetails.setCode(001);
+		ResponseRestService errorDetails = new ResponseRestService<>(
+				((ServletWebRequest) request).getRequest().getMethod(),
+				((ServletWebRequest) request).getRequest().getRequestURL().toString(),
+				SecurityContextHolder.getContext().getAuthentication().getName(), ex.getMessage());
+		if (ex instanceof JpaSystemException) {			
 			errorDetails.setDeveloperMessage("Error jpa");
-		}else if(ex instanceof DataIntegrityViolationException) {
-			errorDetails.setHttpStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-			errorDetails.setCode(002);
+		} else if (ex instanceof DataIntegrityViolationException) {
 			errorDetails.setDeveloperMessage("Error violacion de llave");
-		}else if(ex instanceof TransactionSystemException) {
-			errorDetails.setMessage(errorDetails.getMessage() + " "+ ex.getCause() ); 
+		} else if (ex instanceof TransactionSystemException) {
+			errorDetails.setDeveloperMessage(errorDetails.getMessage() + " " + ex.getCause());
+		}else {
+			errorDetails.setDeveloperMessage("Error no controlado por favor informar al administrador");
 		}
 		return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
 	}

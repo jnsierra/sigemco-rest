@@ -1,8 +1,5 @@
 package co.com.codesoftware.rest;
 
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
-
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import co.com.codesoftware.dto.UsuarioDto;
-import co.com.codesoftware.entity.RoleRestEntity;
 import co.com.codesoftware.entity.UsuarioEntity;
 import co.com.codesoftware.service.IRoleRestService;
 import co.com.codesoftware.service.IUsuarioService;
