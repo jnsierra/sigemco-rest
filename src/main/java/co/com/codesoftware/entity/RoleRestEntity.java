@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import lombok.Getter;
@@ -27,6 +28,7 @@ public class RoleRestEntity extends Auditable<String> {
 	@Column(name="rore_rore")
 	private Long id;
 	@NotNull(message="El nombre del role no puede ser nulo")
+	@NotEmpty(message="El nombre del role no puede ser vacio")
 	@Column(name="rore_nombre", unique=true)
 	private String nombre;
 	@ManyToMany(mappedBy = "rolesRest")

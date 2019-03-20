@@ -1,5 +1,8 @@
 package co.com.codesoftware.rest;
 
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,7 +13,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import co.com.codesoftware.dto.UsuarioDto;
+import co.com.codesoftware.entity.RoleRestEntity;
 import co.com.codesoftware.entity.UsuarioEntity;
+import co.com.codesoftware.service.IRoleRestService;
 import co.com.codesoftware.service.IUsuarioService;
 
 @RestController
@@ -19,6 +24,10 @@ public class UsuarioController {
 
 	@Autowired
 	IUsuarioService usuarioService;
+	
+	@Autowired
+	IRoleRestService roleRestService;
+	
 	@Autowired
 	ModelMapper map;
 
@@ -32,6 +41,14 @@ public class UsuarioController {
 	@RequestMapping(method = RequestMethod.GET, value = "/")
 	public ResponseEntity<UsuarioDto[]> getAll() {
 		return new ResponseEntity<UsuarioDto[]>(map.map(usuarioService.getAll(), UsuarioDto[].class), HttpStatus.OK);
+	}
+	
+	@RequestMapping(method = RequestMethod.PUT, value = "/rolerest/")
+	public ResponseEntity<Boolean> modifyRolesRestByUser(@RequestBody UsuarioDto usuario){
+		if(!roleRestService.modifyRoleRestByUser(usuario.getId(), map.map(usuario, UsuarioEntity.class).getRolesRest()).isPresent()) {
+			return new ResponseEntity<Boolean>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		return new ResponseEntity<Boolean>(Boolean.TRUE, HttpStatus.OK);
 	}
 
 }

@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 import co.com.codesoftware.entity.RoleRestEntity;
 
 @Repository
-public interface IRoleRestRepository extends JpaRepository<RoleRestEntity, Long>, CrudRepository<RoleRestEntity, Long>{
+public interface IRoleRestRepository extends JpaRepository<RoleRestEntity, Long>, CrudRepository<RoleRestEntity, Long>, IRoleRestRepositoryCustom{
 
 }

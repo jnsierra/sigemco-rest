@@ -25,4 +25,8 @@ public class UsuarioService implements IUsuarioService {
 		return usuarioRepository.getAll();
 	}
 
+	@Override
+	public Boolean validateAuth(String usuario, String contra) {
+		return usuarioRepository.authenticateUser(usuario, contra).isPresent();
+	}
 }

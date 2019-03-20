@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.orm.jpa.JpaSystemException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.transaction.TransactionSystemException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,6 +21,9 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
 
 	@ExceptionHandler(Exception.class)
 	public final ResponseEntity<ErrorDetails> handleAllExceptions(Exception ex, WebRequest request) {
+		System.out.println("*********************************************************************");
+		ex.printStackTrace();
+		System.out.println("*********************************************************************");
 		ErrorDetails errorDetails = new ErrorDetails();
 		errorDetails.setUri(((ServletWebRequest)request).getRequest().getRequestURL().toString());
 		errorDetails.setMethod(((ServletWebRequest)request).getRequest().getMethod());
@@ -33,8 +37,9 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
 			errorDetails.setHttpStatus(HttpStatus.INTERNAL_SERVER_ERROR);
 			errorDetails.setCode(002);
 			errorDetails.setDeveloperMessage("Error violacion de llave");
+		}else if(ex instanceof TransactionSystemException) {
+			errorDetails.setMessage(errorDetails.getMessage() + " "+ ex.getCause() ); 
 		}
-		
 		return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 

@@ -15,5 +15,12 @@ public interface IUsuarioService {
 	 * @return
 	 */
 	List<UsuarioEntity> getAll();
+	/**
+	 * Metodo con el cual se valida si las credenciales de un usuario son correctas
+	 * @param usuario
+	 * @param contra
+	 * @return
+	 */
+	Boolean validateAuth(String usuario, String contra);
 
 }
