@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import co.com.codesoftware.dto.UsuarioDto;
+import co.com.codesoftware.dto.error.ResponseRestService;
 import co.com.codesoftware.entity.UsuarioEntity;
 import co.com.codesoftware.service.IRoleRestService;
 import co.com.codesoftware.service.IUsuarioService;
@@ -20,31 +21,36 @@ public class UsuarioController {
 
 	@Autowired
 	IUsuarioService usuarioService;
-	
+
 	@Autowired
 	IRoleRestService roleRestService;
-	
+
 	@Autowired
-	ModelMapper map;
+	ModelMapper mapper;
 
 	@RequestMapping(method = RequestMethod.POST, value = "/")
-	public ResponseEntity<UsuarioDto> save(@RequestBody UsuarioDto usuario) {
-		return new ResponseEntity<UsuarioDto>(
-				map.map(usuarioService.save(map.map(usuario, UsuarioEntity.class)), UsuarioDto.class),
+	public ResponseEntity<ResponseRestService<UsuarioDto>> save(@RequestBody UsuarioDto usuario) {
+		return new ResponseEntity<>(
+				new ResponseRestService<>(
+						mapper.map(usuarioService.save(mapper.map(usuario, UsuarioEntity.class)), UsuarioDto.class)),
 				HttpStatus.CREATED);
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/")
-	public ResponseEntity<UsuarioDto[]> getAll() {
-		return new ResponseEntity<UsuarioDto[]>(map.map(usuarioService.getAll(), UsuarioDto[].class), HttpStatus.OK);
+	public ResponseEntity<ResponseRestService<UsuarioDto[]>> getAll() {
+		return new ResponseEntity<ResponseRestService<UsuarioDto[]>>(
+				new ResponseRestService<UsuarioDto[]>(mapper.map(usuarioService.getAll(), UsuarioDto[].class)),
+				HttpStatus.OK);
 	}
-	
+
 	@RequestMapping(method = RequestMethod.PUT, value = "/rolerest/")
-	public ResponseEntity<Boolean> modifyRolesRestByUser(@RequestBody UsuarioDto usuario){
-		if(!roleRestService.modifyRoleRestByUser(usuario.getId(), map.map(usuario, UsuarioEntity.class).getRolesRest()).isPresent()) {
-			return new ResponseEntity<Boolean>(HttpStatus.INTERNAL_SERVER_ERROR);
+	public ResponseEntity<ResponseRestService<Boolean>> modifyRolesRestByUser(@RequestBody UsuarioDto usuario) {
+		if (!roleRestService
+				.modifyRoleRestByUser(usuario.getId(), mapper.map(usuario, UsuarioEntity.class).getRolesRest())
+				.isPresent()) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		return new ResponseEntity<Boolean>(Boolean.TRUE, HttpStatus.OK);
+		return new ResponseEntity<>(new ResponseRestService<>(Boolean.TRUE), HttpStatus.OK);
 	}
 
 }

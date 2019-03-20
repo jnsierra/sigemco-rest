@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import co.com.codesoftware.dto.PersonaDto;
+import co.com.codesoftware.dto.error.ResponseRestService;
 import co.com.codesoftware.entity.PersonaEntity;
 import co.com.codesoftware.service.IPersonaService;
 
@@ -20,10 +21,13 @@ public class PersonaController {
 	IPersonaService personaService;
 	
 	@Autowired
-	ModelMapper map;
+	ModelMapper mapper;
 	
 	@RequestMapping(method=RequestMethod.POST, value="/")
-	public ResponseEntity<PersonaEntity> save(@RequestBody PersonaDto personaDto){
-		return new ResponseEntity<>(personaService.save(map.map(personaDto, PersonaEntity.class)), HttpStatus.CREATED);
+	public ResponseEntity< ResponseRestService< PersonaDto > > save(@RequestBody PersonaDto personaDto){
+		return new ResponseEntity<>(
+				new ResponseRestService<>(mapper.map(personaService.save(mapper.map(personaDto, PersonaEntity.class)), PersonaDto.class))
+				, HttpStatus.CREATED);
 	}
+	
 }

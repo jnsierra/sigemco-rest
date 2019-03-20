@@ -18,6 +18,7 @@ public class ResponseRestService<T> implements Serializable {
 	//Variables usuadas para el envio de objetos en el caso que sea Extiso
 	private T object;
 	private List<T> listObject;
+	private T[] vectorObject;
 	private Integer code;
 	
 	private String method;
@@ -37,6 +38,11 @@ public class ResponseRestService<T> implements Serializable {
 		this.listObject = listObject;
 		this.code = 1;
 	}
+	
+	public ResponseRestService(T[] vectorObject) {
+		super();
+		this.vectorObject = vectorObject;
+	}
 
 	public ResponseRestService(String method, String uri, String user, String message) {
 		super();
@@ -46,7 +52,6 @@ public class ResponseRestService<T> implements Serializable {
 		this.message = message;
 		this.code = 2;
 	}
-	
-	
-	
+
+		
 }
