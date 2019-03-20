@@ -19,6 +19,7 @@ import co.com.codesoftware.dto.error.ResponseRestService;
 @RestController
 public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
+	@SuppressWarnings("rawtypes")
 	@ExceptionHandler(Exception.class)
 	public final ResponseEntity<ResponseRestService> handleAllExceptions(Exception ex, WebRequest request) {
 		System.out.println(
