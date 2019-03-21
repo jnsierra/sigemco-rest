@@ -4,6 +4,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.orm.jpa.JpaSystemException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.TransactionSystemException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -35,8 +36,12 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
 		} else if (ex instanceof DataIntegrityViolationException) {
 			errorDetails.setDeveloperMessage("Error violacion de llave");
 		} else if (ex instanceof TransactionSystemException) {
+			TransactionSystemException excepcionCast = (TransactionSystemException) ex;
 			errorDetails.setDeveloperMessage(errorDetails.getMessage() + " " + ex.getCause());
-		}else {
+		} else if(ex instanceof AccessDeniedException ) {
+			errorDetails.setDeveloperMessage(".::No tiene acceso a este recurso, consulte los roles rest del usuario autenticado::.");
+			return new ResponseEntity<>(errorDetails, HttpStatus.UNAUTHORIZED);
+		} else {
 			errorDetails.setDeveloperMessage("Error no controlado por favor informar al administrador");
 		}
 		return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);

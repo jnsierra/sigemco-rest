@@ -12,6 +12,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -28,11 +30,17 @@ public class PersonaEntity extends Auditable<String> {
 	private Long id;
 	@Column(name = "pers_apellido")
 	private String apellido;
+	@NotNull
+	@NotBlank
 	@Column(name = "pers_nombre")
 	private String nombre;
-	@Column(name = "pers_cedula")
+	@NotNull
+	@NotBlank
+	@Column(name = "pers_cedula", unique=true)
 	private String cedula;
-	@Column(name = "pers_email")
+	@NotNull
+	@NotBlank
+	@Column(name = "pers_email", unique=true)
 	private String mail;
 	@Column(name = "pers_fecha_nac")
 	private Date fechaNacimiento;
